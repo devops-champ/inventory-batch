@@ -10,6 +10,11 @@ on:
   push:
     branches:
       - main
+
+  pull_request:
+    branches:
+      - main
+
   workflow_dispatch:
     inputs:
       deployment_mode:
@@ -369,9 +374,7 @@ jobs:
     needs:
       - setversion
       - deploy
-    if: |
-      github.event_name == 'push' ||
-      inputs.deployment_mode == 'ArgoCD (Image Deployment)'
+    if: inputs.deployment_mode == 'ArgoCD (Image Deployment)'
     env:
       VERSION: ${{ needs.setversion.outputs.new_version }}
     steps:
@@ -482,13 +485,32 @@ jobs:
           else
             git commit -m "$COMMIT_MSG"
           fi
-
+      - name: Authenticate GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh auth status
+          
       - name: Push Changes
         run: |
           set -e
 
           cd gitops
-          git push origin main
+          
+          if [ "${{ github.event_name }}" = "push" ]; then
+              git push origin main
+          else
+              BRANCH=gitops-${VERSION}
+          
+              git checkout -b $BRANCH
+              git push origin $BRANCH
+          
+              gh pr create \
+                --title "${{ steps.jira.outputs.jira }} Update image tag to ${VERSION}" \
+                --body "Automated GitOps update" \
+                --base main \
+                --head $BRANCH
+          fi
 
   # ==========================
   # ARGOCD DEPLOY
