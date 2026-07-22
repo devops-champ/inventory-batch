@@ -374,7 +374,9 @@ jobs:
     needs:
       - setversion
       - deploy
-    if: inputs.deployment_mode == 'ArgoCD (Image Deployment)'
+    if: |
+      github.event_name == 'push' ||
+      github.event_name == 'pull_request'
     env:
       VERSION: ${{ needs.setversion.outputs.new_version }}
     steps:
