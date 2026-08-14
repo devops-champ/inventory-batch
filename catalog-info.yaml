@@ -3,6 +3,13 @@ kind: Component
 metadata:
   name: inventory-batch
   description: Sample service with CI/CD
+  links:
+  - url: http://35.207.209.61/inventory-batch-dev/actuator/health
+    title: inventory-batch-dev
+    icon: web
+  - url: http://34.180.34.240/
+    title: Grafana Dashboard
+    icon: dashboard
   annotations:
     devlake.io/project-name: inventory-batch
     github.com/project-slug: devops-champ/inventory-batch
