@@ -4,7 +4,7 @@ metadata:
   name: inventory-batch
   description: Sample service with CI/CD
   links:
-  - url: http://136.68.103.66//inventory-batch-dev/actuator/health
+  - url: http://136.68.103.66/inventory-batch-dev/actuator/health
     title: inventory-batch-dev
     icon: web
   - url: http://35.200.162.252/
